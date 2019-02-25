@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+// Block is a block in a blockchain. It stores a creation timestamp, its own hash, the hash of the previous block in
+// the chain, and some generic data
 type Block struct {
 	Timestamp    int64
 	Data         []byte
@@ -15,6 +17,7 @@ type Block struct {
 	Hash         []byte
 }
 
+// NewBlock creates a new block with specified data and a specified hash of a previous block
 func NewBlock(data []byte, previousHash []byte) *Block {
 	block := &Block{
 		Timestamp:    time.Now().Unix(),
@@ -25,6 +28,8 @@ func NewBlock(data []byte, previousHash []byte) *Block {
 	return block
 }
 
+// createHash creates a hash for a block using SHA256. The hash consists of the timestamp, the data and the hash
+// of the previous block
 func (block *Block) createHash() {
 	hashValue := bytes.Join(
 		[][]byte{
@@ -36,6 +41,7 @@ func (block *Block) createHash() {
 	block.Hash = hash[:]
 }
 
+// String is a string representation of a block
 func (block *Block) String() string {
 	return fmt.Sprintf("Previous Hash: %v\nHash: %v\n Data: %v",
 		block.PreviousHash, block.Hash, block.Data)
