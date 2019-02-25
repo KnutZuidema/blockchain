@@ -27,7 +27,8 @@ func TestBlock_createHash(t *testing.T) {
 		[][]byte{
 			[]byte("hash"),
 			[]byte(""),
-			[]byte(strconv.FormatInt(block.Timestamp, 10)),
+			[]byte(strconv.FormatInt(block.Timestamp.Unix(), 10)),
+			block.ProofOfWork.Counter.Bytes(),
 		}, []byte{})
 	hash := sha256.Sum256(hashValue)
 	hashValue = hash[:]
@@ -41,8 +42,8 @@ func TestBlock_createHash(t *testing.T) {
 func TestBlock_String(t *testing.T) {
 	t.Run("string", func(t *testing.T) {
 		block := NewBlock([]byte("str"), []byte(""))
-		str := fmt.Sprintf("Previous Hash: %v\nHash: %v\n Data: %v",
-			block.PreviousHash, block.Hash, block.Data)
+		str := fmt.Sprintf("Previous Hash: %x\nHash: %x\nTimestamp: %v\nData: %s",
+			block.PreviousHash, block.Hash, block.Timestamp, block.Data)
 		if got := block.String(); got != str {
 			t.Errorf("Block.String() = %v, want %v", got, str)
 		}
