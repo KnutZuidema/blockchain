@@ -8,7 +8,7 @@ import (
 // Block is a block in a blockchain. It stores a creation timestamp, its own hash, the hash of the previous block in
 // the chain, and some generic data
 type Block struct {
-	Timestamp    int64
+	Timestamp    time.Time
 	Data         []byte
 	PreviousHash []byte
 	Hash         []byte
@@ -18,7 +18,7 @@ type Block struct {
 // NewBlock creates a new block with specified data and a specified hash of a previous block
 func NewBlock(data []byte, previousHash []byte) *Block {
 	block := &Block{
-		Timestamp:    time.Now().Unix(),
+		Timestamp:    time.Now(),
 		Data:         data,
 		PreviousHash: previousHash,
 	}

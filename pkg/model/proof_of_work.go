@@ -40,7 +40,7 @@ func (pow ProofOfWork) createHash() []byte {
 		[][]byte{
 			pow.block.Data,
 			pow.block.PreviousHash,
-			[]byte(strconv.FormatInt(pow.block.Timestamp, 10)),
+			[]byte(strconv.FormatInt(pow.block.Timestamp.Unix(), 10)),
 			pow.Counter.Bytes(),
 		}, []byte{})
 	hash := sha256.Sum256(hashValue)
