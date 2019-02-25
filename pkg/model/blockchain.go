@@ -16,5 +16,17 @@ func NewBlockchain() *Blockchain {
 // AddBlock adds a block with the specified data to the chain using the hash of the latest block in the chain as
 // previous block hash for the new block
 func (chain *Blockchain) AddBlock(data []byte) {
-	chain.Blocks = append(chain.Blocks, NewBlock(data, chain.Blocks[len(chain.Blocks)-1].Hash))
+	block := NewBlock(data, chain.Blocks[len(chain.Blocks)-1].Hash)
+	if !block.ProofOfWork.Validate() {
+		return
+	}
+	chain.Blocks = append(chain.Blocks, block)
+}
+
+func (chain *Blockchain) String() string {
+	str := "Blockchain:\n\n"
+	for _, block := range chain.Blocks {
+		str += block.String() + "\n\n"
+	}
+	return str
 }

@@ -1,10 +1,7 @@
 package model
 
 import (
-	"bytes"
-	"crypto/sha256"
 	"fmt"
-	"strconv"
 	"time"
 )
 
@@ -15,6 +12,7 @@ type Block struct {
 	Data         []byte
 	PreviousHash []byte
 	Hash         []byte
+	ProofOfWork  *ProofOfWork
 }
 
 // NewBlock creates a new block with specified data and a specified hash of a previous block
@@ -24,25 +22,18 @@ func NewBlock(data []byte, previousHash []byte) *Block {
 		Data:         data,
 		PreviousHash: previousHash,
 	}
+	block.ProofOfWork = NewProofOfWork(block)
 	block.createHash()
 	return block
 }
 
-// createHash creates a hash for a block using SHA256. The hash consists of the timestamp, the data and the hash
-// of the previous block
+// createHash creates a hash for a block using SHA256. The hash is created using a proof of work method
 func (block *Block) createHash() {
-	hashValue := bytes.Join(
-		[][]byte{
-			block.Data,
-			block.PreviousHash,
-			[]byte(strconv.FormatInt(block.Timestamp, 10)),
-		}, []byte{})
-	hash := sha256.Sum256(hashValue)
-	block.Hash = hash[:]
+	block.Hash = block.ProofOfWork.Run()
 }
 
 // String is a string representation of a block
 func (block *Block) String() string {
-	return fmt.Sprintf("Previous Hash: %v\nHash: %v\n Data: %v",
-		block.PreviousHash, block.Hash, block.Data)
+	return fmt.Sprintf("Previous Hash: %x\nHash: %x\nTimestamp: %v\nData: %s",
+		block.PreviousHash, block.Hash, block.Timestamp, block.Data)
 }
