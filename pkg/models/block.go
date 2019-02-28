@@ -1,6 +1,7 @@
-package model
+package models
 
 import (
+	"blockchain/pkg/pow"
 	"fmt"
 	"time"
 )
@@ -12,7 +13,7 @@ type Block struct {
 	Data         []byte
 	PreviousHash []byte
 	Hash         []byte
-	ProofOfWork  *ProofOfWork
+	ProofOfWork  *pow.ProofOfWork
 }
 
 // NewBlock creates a new block with specified data and a specified hash of a previous block
@@ -22,7 +23,7 @@ func NewBlock(data []byte, previousHash []byte) *Block {
 		Data:         data,
 		PreviousHash: previousHash,
 	}
-	block.ProofOfWork = NewProofOfWork(block)
+	block.ProofOfWork = pow.NewProofOfWork(block)
 	block.createHash()
 	return block
 }

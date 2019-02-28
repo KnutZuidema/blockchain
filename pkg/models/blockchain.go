@@ -1,4 +1,4 @@
-package model
+package models
 
 // Blockchain represents a chain of blocks. Its only member is a slice of blocks
 type Blockchain struct {
