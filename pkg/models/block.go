@@ -1,18 +1,20 @@
 package models
 
 import (
+	"bytes"
 	"fmt"
+	"math/big"
 	"time"
 )
 
 // Block is a block in a blockchain. It stores a creation timestamp, its own hash, the hash of the previous block in
 // the chain, and some generic data
 type Block struct {
-	Timestamp    time.Time
-	Data         []byte
-	PreviousHash []byte
-	Hash         []byte
-	ProofOfWork  *pow.ProofOfWork
+	Timestamp          time.Time `json:"timestamp"`
+	Data               []byte    `json:"data"`
+	PreviousHash       []byte    `json:"previous_hash"`
+	Hash               []byte    `json:"hash"`
+	ProofOfWorkCounter *big.Int  `json:"proof_of_work_counter"`
 }
 
 // NewBlock creates a new block with specified data and a specified hash of a previous block
@@ -34,7 +36,7 @@ func (block *Block) createHash() {
 }
 
 // String is a string representation of a block
-func (block *Block) String() string {
+func (block Block) String() string {
 	return fmt.Sprintf("Previous Hash: %x\nHash: %x\nTimestamp: %v\nData: %s",
 		block.PreviousHash, block.Hash, block.Timestamp, block.Data)
 }

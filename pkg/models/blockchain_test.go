@@ -2,6 +2,7 @@ package models
 
 import (
 	"bytes"
+	"os"
 	"testing"
 )
 
@@ -40,4 +41,76 @@ func TestBlockchain_AddBlock(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestBlockchainFromDb(t *testing.T) {
+	type args struct {
+		chainName string
+		filepath  string
+	}
+	existingChain := NewBlockchain()
+	_ = existingChain.ToDb("existing chain", "chain.db")
+	tests := []struct {
+		name      string
+		args      args
+		wantChain *Blockchain
+		wantErr   bool
+	}{
+		{"existing chain", args{"existing chain", "chain.db"}, existingChain, false},
+		{"new chain", args{"new chain", "chain.db"}, nil, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotChain, err := BlockchainFromDb(tt.args.chainName, tt.args.filepath)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("BlockchainFromDb() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if tt.wantChain != nil && !gotChain.Equals(*tt.wantChain) {
+				t.Errorf("BlockchainFromDb() = %v, want %v", gotChain, tt.wantChain)
+			}
+		})
+	}
+	t.Run("remove database", func(t *testing.T) {
+		err := os.Remove("chain.db")
+		if err != nil {
+			t.Fatal("Couldn't remove database file", err)
+		}
+	})
+}
+
+func TestBlockchain_ToDb(t *testing.T) {
+	type args struct {
+		chainName string
+		filepath  string
+	}
+	emptyChain := NewBlockchain()
+	chainWithBlock := NewBlockchain()
+	chainWithBlock.AddBlock([]byte("data"))
+	existingChain := NewBlockchain()
+	_ = existingChain.ToDb("existing chain", "chain.db")
+	tests := []struct {
+		name    string
+		chain   *Blockchain
+		args    args
+		wantErr bool
+	}{
+		{"empty chain", emptyChain, args{"empty chain", "chain.db"}, false},
+		{"chain with block", chainWithBlock, args{"chain with block", "chain.db"}, false},
+		{"existing chain", existingChain, args{"existing chain", "chain.db"}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			chain := tt.chain
+			if err := chain.ToDb(tt.args.chainName, tt.args.filepath); (err != nil) != tt.wantErr {
+				t.Errorf("Blockchain.ToDb() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+	t.Run("remove database", func(t *testing.T) {
+		err := os.Remove("chain.db")
+		if err != nil {
+			t.Fatal("Couldn't remove database file", err)
+		}
+	})
 }
