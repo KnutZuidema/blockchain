@@ -30,3 +30,12 @@ func (chain *Blockchain) String() string {
 	}
 	return str
 }
+
+func (chain Blockchain) Equals(otherChain Blockchain) bool {
+	for index := range chain.Blocks {
+		if !chain.Blocks[index].Equals(*otherChain.Blocks[index]) {
+			return false
+		}
+	}
+	return true
+}

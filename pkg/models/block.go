@@ -38,3 +38,7 @@ func (block *Block) String() string {
 	return fmt.Sprintf("Previous Hash: %x\nHash: %x\nTimestamp: %v\nData: %s",
 		block.PreviousHash, block.Hash, block.Timestamp, block.Data)
 }
+
+func (block Block) Equals(otherBlock Block) bool {
+	return bytes.Equal(NewProofOfWork(&block).createHash(), NewProofOfWork(&otherBlock).createHash())
+}
