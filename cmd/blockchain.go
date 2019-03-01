@@ -22,7 +22,13 @@ func main() {
 	switch os.Args[1] {
 	case "add":
 		if err := add.Parse(os.Args[2:]); err != nil {
-			flag.Usage()
+			add.Usage()
+			return
+		}
+		if data == "" {
+			add.Usage()
+			return
+
 		}
 		chain.AddBlock([]byte(data))
 		err := chain.ToDb("chain", "chain.db")
