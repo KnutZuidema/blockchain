@@ -28,7 +28,7 @@ func TestBlock_createHash(t *testing.T) {
 			[]byte("hash"),
 			[]byte(""),
 			[]byte(strconv.FormatInt(block.Timestamp.Unix(), 10)),
-			block.ProofOfWork.Counter.Bytes(),
+			block.ProofOfWorkCounter.Bytes(),
 		}, []byte{})
 	hash := sha256.Sum256(hashValue)
 	hashValue = hash[:]

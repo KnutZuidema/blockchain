@@ -18,18 +18,19 @@ type Block struct {
 // NewBlock creates a new block with specified data and a specified hash of a previous block
 func NewBlock(data []byte, previousHash []byte) *Block {
 	block := &Block{
-		Timestamp:    time.Now(),
-		Data:         data,
-		PreviousHash: previousHash,
+		Timestamp:          time.Now().UTC(),
+		Data:               data,
+		PreviousHash:       previousHash,
+		ProofOfWorkCounter: big.NewInt(0),
 	}
-	block.ProofOfWork = NewProofOfWork(block)
 	block.createHash()
 	return block
 }
 
 // createHash creates a hash for a block using SHA256. The hash is created using a proof of work method
 func (block *Block) createHash() {
-	block.Hash = block.ProofOfWork.Run()
+	pow := NewProofOfWork(block)
+	block.Hash = pow.Run()
 }
 
 // String is a string representation of a block

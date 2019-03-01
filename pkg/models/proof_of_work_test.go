@@ -22,7 +22,7 @@ func TestNewProofOfWork(t *testing.T) {
 		args args
 		want *ProofOfWork
 	}{
-		{"simple", args{block}, &ProofOfWork{target, block, big.NewInt(0)}},
+		{"simple", args{block}, &ProofOfWork{target, block}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -35,9 +35,8 @@ func TestNewProofOfWork(t *testing.T) {
 
 func TestProofOfWork_createHash(t *testing.T) {
 	type fields struct {
-		target  *big.Int
-		block   *Block
-		Counter *big.Int
+		target *big.Int
+		block  *Block
 	}
 	block := NewBlock([]byte("data"), nil)
 	target := big.NewInt(1)
@@ -47,7 +46,7 @@ func TestProofOfWork_createHash(t *testing.T) {
 			block.Data,
 			block.PreviousHash,
 			[]byte(strconv.FormatInt(block.Timestamp.Unix(), 10)),
-			big.NewInt(0).Bytes(),
+			block.ProofOfWorkCounter.Bytes(),
 		}, []byte{})
 	hash := sha256.Sum256(hashValue)
 	tests := []struct {
@@ -55,14 +54,13 @@ func TestProofOfWork_createHash(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"first", fields{target, block, big.NewInt(0)}, hash[:]},
+		{"first", fields{target, block}, hash[:]},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			pow := ProofOfWork{
-				target:  tt.fields.target,
-				block:   tt.fields.block,
-				Counter: tt.fields.Counter,
+				target: tt.fields.target,
+				block:  tt.fields.block,
 			}
 			if got := pow.createHash(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ProofOfWork.createHash() = %v, want %v", got, tt.want)
@@ -98,8 +96,8 @@ func TestProofOfWork_Validate(t *testing.T) {
 		pow  *ProofOfWork
 		want bool
 	}{
-		{"false", &ProofOfWork{target, mockBlock1, big.NewInt(0)}, false},
-		{"true", mockBlock2.ProofOfWork, true},
+		{"false", &ProofOfWork{target, mockBlock1}, false},
+		{"true", NewProofOfWork(mockBlock2), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -17,9 +17,8 @@ var LeadingZeros int64 = 20
 // the increasing counter until the hash is smaller than the target i.e. hash at least the specific amount of leading
 // zeros
 type ProofOfWork struct {
-	target  *big.Int
-	block   *Block
-	Counter *big.Int
+	target *big.Int
+	block  *Block
 }
 
 // NewProofOfWork creates a proof of work construct for the block with the specified amount of leading zeros
@@ -27,21 +26,24 @@ func NewProofOfWork(block *Block) *ProofOfWork {
 	target := big.NewInt(1)
 	target.Lsh(target, uint(256-LeadingZeros))
 	return &ProofOfWork{
-		target:  target,
-		block:   block,
-		Counter: big.NewInt(0),
+		target: target,
+		block:  block,
 	}
 }
 
 // createHash creates a hash for the block using SHA256. The hash consists of the block data, the previous hash, the
 // unix timestamp and the counter.
 func (pow ProofOfWork) createHash() []byte {
+	counter := pow.block.ProofOfWorkCounter
+	if pow.block.ProofOfWorkCounter == nil {
+		counter = big.NewInt(0)
+	}
 	hashValue := bytes.Join(
 		[][]byte{
 			pow.block.Data,
 			pow.block.PreviousHash,
 			[]byte(strconv.FormatInt(pow.block.Timestamp.Unix(), 10)),
-			pow.Counter.Bytes(),
+			counter.Bytes(),
 		}, []byte{})
 	hash := sha256.Sum256(hashValue)
 	return hash[:]
@@ -55,7 +57,7 @@ func (pow *ProofOfWork) Run() (hash []byte) {
 	for {
 		hash = pow.createHash()
 		if pow.target.Cmp(compareInt.SetBytes(hash)) != 1 {
-			pow.Counter.Add(pow.Counter, big.NewInt(1))
+			pow.block.ProofOfWorkCounter.Add(pow.block.ProofOfWorkCounter, big.NewInt(1))
 		} else {
 			break
 		}
