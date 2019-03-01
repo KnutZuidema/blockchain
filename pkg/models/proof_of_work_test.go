@@ -1,7 +1,6 @@
-package pow
+package models
 
 import (
-	"blockchain/pkg/models"
 	"bytes"
 	"crypto/sha256"
 	"math/big"
@@ -13,9 +12,9 @@ import (
 
 func TestNewProofOfWork(t *testing.T) {
 	type args struct {
-		block *models.Block
+		block *Block
 	}
-	block := &models.Block{Timestamp: time.Now(), Data: []byte("data"), PreviousHash: nil}
+	block := &Block{Timestamp: time.Now(), Data: []byte("data"), PreviousHash: nil}
 	target := big.NewInt(1)
 	target.Lsh(target, uint(256-LeadingZeros))
 	tests := []struct {
@@ -37,10 +36,10 @@ func TestNewProofOfWork(t *testing.T) {
 func TestProofOfWork_createHash(t *testing.T) {
 	type fields struct {
 		target  *big.Int
-		block   *models.Block
+		block   *Block
 		Counter *big.Int
 	}
-	block := models.NewBlock([]byte("data"), nil)
+	block := NewBlock([]byte("data"), nil)
 	target := big.NewInt(1)
 	target.Lsh(target, uint(256-LeadingZeros))
 	hashValue := bytes.Join(
@@ -77,8 +76,8 @@ func TestProofOfWork_Run(t *testing.T) {
 		name string
 		pow  *ProofOfWork
 	}{
-		{"genesis block", NewProofOfWork(models.NewBlock([]byte("data"), nil))},
-		{"generic block", NewProofOfWork(models.NewBlock([]byte("data"), []byte("previous")))},
+		{"genesis block", NewProofOfWork(NewBlock([]byte("data"), nil))},
+		{"generic block", NewProofOfWork(NewBlock([]byte("data"), []byte("previous")))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -92,8 +91,8 @@ func TestProofOfWork_Run(t *testing.T) {
 func TestProofOfWork_Validate(t *testing.T) {
 	target := big.NewInt(1)
 	target.Lsh(target, uint(256-LeadingZeros))
-	mockBlock1 := &models.Block{}
-	mockBlock2 := models.NewBlock([]byte("data"), nil)
+	mockBlock1 := &Block{}
+	mockBlock2 := NewBlock([]byte("data"), nil)
 	tests := []struct {
 		name string
 		pow  *ProofOfWork

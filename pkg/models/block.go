@@ -1,7 +1,6 @@
 package models
 
 import (
-	"blockchain/pkg/pow"
 	"fmt"
 	"time"
 )
@@ -23,7 +22,7 @@ func NewBlock(data []byte, previousHash []byte) *Block {
 		Data:         data,
 		PreviousHash: previousHash,
 	}
-	block.ProofOfWork = pow.NewProofOfWork(block)
+	block.ProofOfWork = NewProofOfWork(block)
 	block.createHash()
 	return block
 }

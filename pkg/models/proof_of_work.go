@@ -1,7 +1,6 @@
-package pow
+package models
 
 import (
-	"blockchain/pkg/models"
 	"bytes"
 	"crypto/sha256"
 	"fmt"
@@ -19,12 +18,12 @@ var LeadingZeros int64 = 20
 // zeros
 type ProofOfWork struct {
 	target  *big.Int
-	block   *models.Block
+	block   *Block
 	Counter *big.Int
 }
 
 // NewProofOfWork creates a proof of work construct for the block with the specified amount of leading zeros
-func NewProofOfWork(block *models.Block) *ProofOfWork {
+func NewProofOfWork(block *Block) *ProofOfWork {
 	target := big.NewInt(1)
 	target.Lsh(target, uint(256-LeadingZeros))
 	return &ProofOfWork{
