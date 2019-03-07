@@ -14,7 +14,7 @@ type Blockchain struct {
 // requires a previous block hash. The genesis block is the only block with a nil value for its previous hash
 func NewBlockchain() *Blockchain {
 	chain := &Blockchain{}
-	chain.Blocks = append(chain.Blocks, NewBlock([]byte("Genesis Block"), nil))
+	chain.Blocks = append(chain.Blocks, NewBlock([]*Transaction{NewGenesisTransaction("receiver", "genesis")}, nil))
 	return chain
 }
 
@@ -45,8 +45,8 @@ func BlockchainFromDb(chainName, filepath string) (chain Blockchain, err error) 
 
 // AddBlock adds a block with the specified data to the chain using the hash of the latest block in the chain as
 // previous block hash for the new block
-func (chain *Blockchain) AddBlock(data []byte) {
-	block := NewBlock(data, chain.Blocks[len(chain.Blocks)-1].Hash)
+func (chain *Blockchain) AddBlock(transactions []*Transaction) {
+	block := NewBlock(transactions, chain.Blocks[len(chain.Blocks)-1].Hash)
 	if !NewProofOfWork(block).Validate() {
 		return
 	}

@@ -40,7 +40,7 @@ func (pow ProofOfWork) createHash() []byte {
 	}
 	hashValue := bytes.Join(
 		[][]byte{
-			pow.block.Data,
+			pow.block.HashTransactions(),
 			pow.block.PreviousHash,
 			[]byte(strconv.FormatInt(pow.block.Timestamp.Unix(), 10)),
 			[]byte(strconv.FormatInt(LeadingZeros, 10)),
@@ -54,7 +54,6 @@ func (pow ProofOfWork) createHash() []byte {
 func (pow *ProofOfWork) Run() (hash []byte) {
 	var compareInt big.Int
 	start := time.Now()
-	fmt.Printf("creating hash for %s\n", pow.block.Data)
 	for {
 		hash = pow.createHash()
 		if pow.target.Cmp(compareInt.SetBytes(hash)) != 1 {
@@ -64,7 +63,7 @@ func (pow *ProofOfWork) Run() (hash []byte) {
 		}
 	}
 	duration := time.Now().Sub(start)
-	fmt.Printf("hash creation for %s took %v seconds\n", pow.block.Data, duration.Seconds())
+	fmt.Printf("hash creation took %v seconds\n", duration.Seconds())
 	return
 }
 
