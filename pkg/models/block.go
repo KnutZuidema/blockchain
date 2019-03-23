@@ -30,6 +30,10 @@ func NewBlock(transactions []*Transaction, previousHash []byte) *Block {
 	return block
 }
 
+func NewGenesisBlock(transactions []*Transaction) *Block {
+	return NewBlock(transactions, nil)
+}
+
 // createHash creates a hash for a block using SHA256. The hash is created using a proof of work method
 func (block *Block) createHash() {
 	pow := NewProofOfWork(block)
