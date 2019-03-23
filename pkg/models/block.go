@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-// Block is a block in a blockchain. It stores a creation timestamp, its own hash, the hash of the previous block in
-// the chain, and some generic data
+// Block is a block in a blockchain. It stores a creation timestamp, its own
+// hash, the hash of the previous block in the chain, and some generic data
 type Block struct {
 	Timestamp          time.Time      `json:"timestamp"`
 	Transactions       []*Transaction `json:"transaction"`
@@ -18,7 +18,8 @@ type Block struct {
 	ProofOfWorkCounter *big.Int       `json:"proof_of_work_counter"`
 }
 
-// NewBlock creates a new block with specified data and a specified hash of a previous block
+// NewBlock creates a new block with specified data and a specified hash of a
+// previous block
 func NewBlock(transactions []*Transaction, previousHash []byte) *Block {
 	block := &Block{
 		Timestamp:          time.Now().UTC(),
@@ -34,7 +35,8 @@ func NewGenesisBlock(transactions []*Transaction) *Block {
 	return NewBlock(transactions, nil)
 }
 
-// createHash creates a hash for a block using SHA256. The hash is created using a proof of work method
+// createHash creates a hash for a block using SHA256. The hash is created using
+// a proof of work method
 func (block *Block) createHash() {
 	pow := NewProofOfWork(block)
 	block.Hash = pow.Run()
@@ -42,12 +44,14 @@ func (block *Block) createHash() {
 
 // String is a string representation of a block
 func (block Block) String() string {
-	return fmt.Sprintf("Previous Hash: %x\nHash: %x\nTimestamp: %v\nData: %v",
-		block.PreviousHash, block.Hash, block.Timestamp, block.Transactions)
+	return fmt.Sprintf("Previous Hash: %x\nHash: %x\nTimestamp: %v"+
+		"\nData: %v", block.PreviousHash, block.Hash, block.Timestamp,
+		block.Transactions)
 }
 
 func (block Block) Equals(otherBlock Block) bool {
-	return bytes.Equal(NewProofOfWork(&block).createHash(), NewProofOfWork(&otherBlock).createHash())
+	return bytes.Equal(NewProofOfWork(&block).createHash(),
+		NewProofOfWork(&otherBlock).createHash())
 }
 
 func (block *Block) HashTransactions() []byte {

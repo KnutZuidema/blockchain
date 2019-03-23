@@ -18,8 +18,9 @@ type Blockchain struct {
 	Database *bolt.DB `json:"database"`
 }
 
-// NewBlockchain creates a new blockchain containing a genesis block. A genesis block is required, since every block
-// requires a previous block hash. The genesis block is the only block with a nil value for its previous hash
+// NewBlockchain creates a new blockchain containing a genesis block. A genesis
+// block is required, since every block requires a previous block hash. The
+// genesis block is the only block with a nil value for its previous hash
 func NewBlockchain(address string) (chain *Blockchain, err error) {
 	err = os.Remove(DbFilePath)
 	if err != nil {
@@ -31,7 +32,9 @@ func NewBlockchain(address string) (chain *Blockchain, err error) {
 	}
 	var tail []byte
 	err = db.Update(func(tx *bolt.Tx) error {
-		genesis := NewGenesisBlock([]*Transaction{NewGenesisTransaction(address)})
+		genesis := NewGenesisBlock([]*Transaction{
+			NewGenesisTransaction(address),
+		})
 		bucket, err := tx.CreateBucket([]byte(BucketName))
 		bytes, err := json.Marshal(genesis)
 		if err != nil {
@@ -77,8 +80,8 @@ func GetBlockchain() (chain *Blockchain, err error) {
 	return
 }
 
-// AddBlock adds a block with the specified data to the chain using the hash of the latest block in the chain as
-// previous block hash for the new block
+// AddBlock adds a block with the specified data to the chain using the hash
+// of the latest block in the chain as previous block hash for the new block
 func (chain *Blockchain) AddBlock(transactions []*Transaction) (err error) {
 	block := NewBlock(transactions, chain.Tail)
 	bytes, err := json.Marshal(block)

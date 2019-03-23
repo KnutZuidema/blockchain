@@ -22,7 +22,8 @@ type TransactionInput struct {
 func NewGenesisTransaction(receiver string) *Transaction {
 	input := &TransactionInput{nil, -1, "genesis"}
 	output := &TransactionOutput{GenesisReward, receiver}
-	transaction := &Transaction{nil, []*TransactionInput{input}, []*TransactionOutput{output}}
+	transaction := &Transaction{nil, []*TransactionInput{input},
+		[]*TransactionOutput{output}}
 	transaction.SetId()
 	return transaction
 }
