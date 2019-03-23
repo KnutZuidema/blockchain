@@ -11,10 +11,19 @@ import (
 
 func main() {
 	create := argparse.NewParser("create", "create a blockchain")
-	creator := create.String("c", "creator", &argparse.Options{Required: true, Help: "creator of the chain"})
+	creator := create.String("c", "creator", &argparse.Options{
+		Required: true,
+		Help:     "creator of the chain",
+	})
 	mine := argparse.NewParser("mine", "mine blocks")
-	receiver := mine.String("r", "receiver", &argparse.Options{Required: true, Help: "receiver of the reward"})
-	amount := mine.Int("a", "amount", &argparse.Options{Default: 1, Help: "amount of blocks to mine"})
+	receiver := mine.String("r", "receiver", &argparse.Options{
+		Required: true,
+		Help:     "receiver of the reward",
+	})
+	amount := mine.Int("a", "amount", &argparse.Options{
+		Default: 1,
+		Help:    "amount of blocks to mine",
+	})
 	if len(os.Args) < 2 {
 		fmt.Println("Need to specify an action")
 		return
