@@ -152,6 +152,49 @@ func (chain Blockchain) Range(action func(Block) bool) (err error) {
 	return
 }
 
+func (chain Blockchain) FindUnspentTransactions(publicKey string) (
+	unspentTransactions []Transaction, err error) {
+	spentOutputs := make(map[string][]int)
+	err = chain.Range(func(block Block) bool {
+		for _, transaction := range block.Transactions {
+			if hasUnspentOutputs(*transaction, publicKey, spentOutputs) {
+				unspentTransactions = append(unspentTransactions, *transaction)
+			}
+			if !transaction.IsGenesisTransaction() {
+				for _, input := range transaction.Inputs {
+					if input.Verify(publicKey) {
+						spentOutputs[string(input.TransactionId)] =
+							append(spentOutputs[string(input.TransactionId)],
+								input.OutputIndex)
+					}
+				}
+			}
+		}
+		return true
+	})
+	return
+}
+
+func hasUnspentOutputs(transaction Transaction, publicKey string,
+	spentOutputs map[string][]int) bool {
+	for index, output := range transaction.Outputs {
+		if output.Verify(publicKey) && !isIndexSpent(index,
+			spentOutputs[string(transaction.Id)]) {
+			return true
+		}
+	}
+	return false
+}
+
+func isIndexSpent(index int, spentIndexes []int) bool {
+	for _, spentIndex := range spentIndexes {
+		if index == spentIndex {
+			return false
+		}
+	}
+	return true
+}
+
 func (chain Blockchain) String() (str string) {
 	_ = chain.Range(func(block Block) bool {
 		str = block.String() + "\n" + str
