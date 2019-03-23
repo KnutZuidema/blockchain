@@ -3,8 +3,9 @@ package models
 import (
 	"encoding/json"
 	"errors"
-	bolt "go.etcd.io/bbolt"
 	"os"
+
+	bolt "go.etcd.io/bbolt"
 )
 
 var DbFilePath = "blockchain.db"

@@ -1,10 +1,12 @@
 package main
 
 import (
-	"blockchain/pkg/models"
 	"fmt"
-	"github.com/akamensky/argparse"
 	"os"
+
+	"github.com/akamensky/argparse"
+
+	"github.com/KnutZuidema/blockchain/pkg/models"
 )
 
 func main() {
