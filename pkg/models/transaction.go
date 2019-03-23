@@ -15,7 +15,7 @@ type TransactionOutput struct {
 
 type TransactionInput struct {
 	TransactionId []byte `json:"transaction_id"`
-	Value         int    `json:"value"`
+	OutputIndex   int    `json:"output_index"`
 	Signature     string `json:"signature"`
 }
 
